@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e4572e">
+<title>Mouthful</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: one-screen landscape stage. Index card on the left, control rail on the right. Single committed look; backdrop shifts tangerine (family) → berry (18+). */
+:root{
+  --stage:#e4572e;        /* tangerine felt backdrop, family mode */
+  --stage-deep:#b8401d;
+  --card:#fbf6ea;         /* index card paper */
+  --rule:#d9e3ef;         /* ruled line blue */
+  --margin:#e9a2a2;       /* card margin line */
+  --ink:#1d2340;          /* navy ink */
+  --ink-soft:#5a5f7a;
+  --gold:#ffd23f;         /* highlight / scores */
+  --good:#1f9d6b;
+  --pass:#8b8fa8;
+  --on-stage:#fff7ec;
+  --display:"Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:light;
+}
+:root.adult{ --stage:#6b1d45; --stage-deep:#4a1230; --gold:#ffc94a; }
+:root.mixed{ --stage:#2d4f8f; --stage-deep:#1f3a6d; }
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--stage);color:var(--on-stage);font-family:var(--body);font-size:16px;overflow:hidden;transition:background .5s ease;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:radial-gradient(circle at 1px 1px, #000 1px, transparent 1.4px);background-size:6px 6px}
+.app{height:100%;box-sizing:border-box;padding-block:12px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));position:relative;z-index:1}
+.screen{height:100%;display:flex;gap:16px}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- Setup ---------- */
+#setup{flex-direction:row;align-items:stretch}
+.brand{flex:1 1 42%;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:0}
+.logo{font-family:var(--display);font-weight:800;font-size:clamp(40px, min(13vh, 8vw), 104px);line-height:.88;letter-spacing:-.03em;margin:0}
+.logo span{display:block;color:var(--gold)}
+.tag{font-size:clamp(14px, 2.6vh, 18px);max-width:30ch;line-height:1.35;margin:0;opacity:.92}
+.sample{margin-top:6px;background:var(--card);color:var(--ink);border-radius:6px;padding:10px 14px;transform:rotate(-2deg);max-width:300px;box-shadow:0 8px 0 var(--stage-deep)}
+.sample b{font-family:var(--display);font-size:clamp(18px,4vh,26px);display:block;line-height:1.05}
+.sample small{color:var(--ink-soft);font-size:13px}
+.panel{flex:1 1 58%;min-width:0;background:var(--card);color:var(--ink);border-radius:14px;padding:clamp(12px,2.6vh,22px) clamp(14px,2.4vw,24px);display:flex;flex-direction:column;gap:clamp(8px,1.8vh,14px);overflow:auto;box-shadow:0 10px 0 var(--stage-deep)}
+.row{display:flex;flex-direction:column;gap:6px}
+.label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 0;min-width:72px;padding:10px 10px;border-radius:10px;background:#efe7d3;color:var(--ink);font-weight:700;font-size:15px;line-height:1.1}
+.seg button small{display:block;font-weight:400;font-size:12px;color:var(--ink-soft);margin-top:2px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.seg button[aria-pressed="true"] small{color:#c9cce0}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.teams input{font:inherit;font-weight:600;font-size:15px;padding:9px 10px;border-radius:10px;border:2px solid #e2d8bf;background:#fff;color:var(--ink);min-width:0;width:100%;box-sizing:border-box}
+.teams-ctl{display:flex;gap:6px;align-items:center}
+.mini{padding:6px 12px;border-radius:999px;background:#efe7d3;font-weight:700;font-size:13px;color:var(--ink)}
+.go{margin-top:8px;max-width:340px;width:100%;padding:14px;border-radius:12px;background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:800;font-size:clamp(18px,4vh,24px);box-shadow:0 5px 0 var(--stage-deep);transition:transform .08s}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--stage-deep)}
+.deckinfo{font-size:13px;opacity:.85}
+.hidden-row[hidden]{display:none}
+@media (max-height:500px){.seg button{padding:7px 8px;font-size:14px}.seg button small{display:none}.teams input{padding:6px 8px}.panel{gap:8px}.logo{font-size:clamp(36px,16vh,72px)}.sample{display:none}}
+
+/* ---------- Play ---------- */
+#play{flex-direction:row;align-items:stretch}
+.cardwrap{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;perspective:1200px}
+.card{position:relative;width:100%;height:100%;max-height:100%;background:var(--card);color:var(--ink);border-radius:10px;box-shadow:0 12px 0 var(--stage-deep), 0 20px 40px rgba(0,0,0,.25);
+  background-image:linear-gradient(to right, transparent 54px, var(--margin) 54px, var(--margin) 56px, transparent 56px),
+                   repeating-linear-gradient(to bottom, transparent 0, transparent 37px, var(--rule) 37px, var(--rule) 39px);
+  background-position:0 0, 0 52px;display:flex;flex-direction:column;padding:14px 22px 14px 74px;box-sizing:border-box;overflow:hidden}
+.card.deal{animation:deal .35s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes deal{from{transform:translateX(30%) rotate(6deg);opacity:0}to{transform:none;opacity:1}}
+.cardtop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.badge{padding:3px 8px;border-radius:999px;background:var(--ink);color:var(--card);letter-spacing:.06em}
+.badge.adult{background:#a3245f}
+.gib{flex:1;display:flex;align-items:center;margin:0;font-family:var(--display);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-wrap:balance;
+  font-size:clamp(26px, min(13vh, 7.4vw), 112px)}
+.gib.long{font-size:clamp(22px, min(10vh, 5.6vw), 84px)}
+.hint{min-height:1.4em;font-size:clamp(14px,3vh,19px);color:var(--ink-soft);font-style:italic;margin:0}
+.answer{position:absolute;inset:auto 0 0 0;padding:12px 22px 14px 74px;font-family:var(--display);font-weight:700;font-size:clamp(20px,6vh,40px);line-height:1.05;color:#fff;transform:translateY(100%);transition:transform .25s ease}
+.answer.show{transform:none}
+.answer.got{background:var(--good)}
+.answer.pass{background:var(--ink)}
+.answer small{display:block;font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.rail{flex:0 0 clamp(170px, 26vw, 260px);display:flex;flex-direction:column;gap:clamp(6px,1.4vh,10px);min-width:0}
+.turnof{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.teamname{font-family:var(--display);font-weight:800;font-size:clamp(18px,4.6vh,28px);line-height:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clock{display:flex;align-items:baseline;gap:8px}
+.secs{font-family:var(--display);font-weight:800;font-size:clamp(30px,10vh,58px);line-height:.9;font-variant-numeric:tabular-nums}
+.secs.low{color:var(--gold);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.bar{height:8px;border-radius:99px;background:rgba(0,0,0,.25);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);transform-origin:left;transition:transform 1s linear}
+.tally{font-size:14px;font-weight:600;opacity:.9}
+.btns{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{padding:clamp(10px,3vh,16px) 8px;border-radius:12px;font-weight:700;font-size:clamp(15px,3.4vh,19px);background:rgba(255,255,255,.16);color:var(--on-stage);box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.btn.big{grid-column:1/-1;background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:800;font-size:clamp(18px,5vh,26px)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.topbtns{display:flex;gap:6px}
+.ghost{padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.2);font-size:13px;font-weight:700}
+
+/* ---------- Between turns / results ---------- */
+.overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:var(--stage);
+  padding-block:max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-bottom, 0px));padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.sheet{width:min(900px,100%);max-height:100%;box-sizing:border-box;display:flex;gap:18px;align-items:stretch}
+.sheet .big{flex:1 1 45%;display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0}
+.sheet h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,10vh,64px);line-height:.95;margin:0;text-wrap:balance}
+.sheet p{margin:0;font-size:clamp(14px,3vh,18px);opacity:.92}
+.scores{flex:1 1 55%;background:var(--card);color:var(--ink);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;overflow:auto;min-width:0;box-shadow:0 10px 0 var(--stage-deep)}
+.sc{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:2px dashed #e6dcc4;font-weight:700}
+.sc:last-of-type{border-bottom:0}
+.sc .n{font-family:var(--display);font-size:clamp(20px,5vh,30px);font-variant-numeric:tabular-nums}
+.sc.next{color:var(--stage)}
+.log{font-size:14px;display:flex;flex-direction:column;gap:3px}
+.log div{display:flex;gap:8px}
+.log .g{color:var(--good);font-weight:700}
+.log .p{color:var(--pass);font-weight:700}
+
+.rotate{display:none}
+@media (orientation:portrait) and (max-width:820px){
+  .rotate{display:flex;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom, 0px));z-index:9;background:var(--ink);color:var(--card);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+  #setup,#play{flex-direction:column}
+  .brand{flex:0 0 auto}
+  .sample{display:none}
+  .rail{flex:0 0 auto}
+  .btns{margin-top:0}
+  .gib{font-size:clamp(26px,9vw,60px)}
+  .gib.long{font-size:clamp(22px,7.5vw,48px)}
+  .card{padding-left:40px;background-image:linear-gradient(to right, transparent 26px, var(--margin) 26px, var(--margin) 28px, transparent 28px),repeating-linear-gradient(to bottom, transparent 0, transparent 37px, var(--rule) 37px, var(--rule) 39px)}
+  .answer{padding-left:40px}
+  .sheet{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}</style>
+</head>
+<body>
+
+
+<div class="app">
+  <!-- SETUP -->
+  <section class="screen" id="setup">
+    <div class="brand">
+      <h1 class="logo">Mouth<span>ful</span></h1>
+      <p class="tag">Read the nonsense out loud. Keep reading until it turns into a phrase you know.</p>
+      <div class="sample" aria-hidden="true"><b>Eye kneader drink</b><small>Say it faster…</small></div>
+      <button type="button" class="go" id="start">Deal the cards</button>
+      <div class="deckinfo" id="deckinfo"></div>
+    </div>
+    <div class="panel">
+      <div class="row">
+        <span class="label" id="lbl-mode">Card deck</span>
+        <div class="seg" role="group" aria-labelledby="lbl-mode" id="mode">
+          <button type="button" data-v="family">Family<small id="c-family"></small></button>
+          <button type="button" data-v="adult">18+<small id="c-adult"></small></button>
+          <button type="button" data-v="mixed">Everything<small id="c-mixed"></small></button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label" id="lbl-style">How to play</span>
+        <div class="seg" role="group" aria-labelledby="lbl-style" id="style">
+          <button type="button" data-v="teams">Team race<small>Timed turns, scores</small></button>
+          <button type="button" data-v="free">Free play<small>No clock, just cards</small></button>
+        </div>
+      </div>
+      <div class="row hidden-row" id="teamrow">
+        <div class="teams-ctl"><span class="label" style="flex:1">Teams</span>
+          <button type="button" class="mini" id="rmteam" aria-label="Remove a team">−</button>
+          <button type="button" class="mini" id="addteam" aria-label="Add a team">+</button></div>
+        <div class="teams" id="teams"></div>
+      </div>
+      <div class="row hidden-row" id="timerow">
+        <span class="label" id="lbl-time">Turn length · rounds</span>
+        <div class="seg" role="group" aria-labelledby="lbl-time" id="secs">
+          <button type="button" data-v="45">45s</button>
+          <button type="button" data-v="60">60s</button>
+          <button type="button" data-v="90">90s</button>
+        </div>
+        <div class="seg" role="group" aria-label="Rounds" id="rounds">
+          <button type="button" data-v="2">2 rounds</button>
+          <button type="button" data-v="3">3 rounds</button>
+          <button type="button" data-v="5">5 rounds</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="screen" id="play" hidden>
+    <div class="cardwrap">
+      <article class="card" id="card" aria-live="polite">
+        <div class="cardtop"><span id="cat"></span><span class="badge" id="rate"></span></div>
+        <p class="gib" id="gib"></p>
+        <p class="hint" id="hint"></p>
+        <div class="answer" id="answer"><small id="anslabel"></small><span id="anstext"></span></div>
+      </article>
+    </div>
+    <aside class="rail">
+      <div class="topbtns"><button type="button" class="ghost" id="quit">Menu</button><button type="button" class="ghost" id="pause" hidden>Pause</button></div>
+      <div id="teamblock">
+        <div class="turnof" id="roundlbl"></div>
+        <div class="teamname" id="tname"></div>
+      </div>
+      <div id="clockblock">
+        <div class="clock"><span class="secs" id="secsleft">60</span><span>sec</span></div>
+        <div class="bar"><i id="barfill"></i></div>
+      </div>
+      <div class="tally" id="tally"></div>
+      <div class="btns" id="btns-team">
+        <button type="button" class="btn" id="b-hint">Hint</button>
+        <button type="button" class="btn" id="b-pass">Pass</button>
+        <button type="button" class="btn big" id="b-got">Got it!</button>
+      </div>
+      <div class="btns" id="btns-free" hidden>
+        <button type="button" class="btn" id="f-hint">Hint</button>
+        <button type="button" class="btn" id="f-reveal">Reveal</button>
+        <button type="button" class="btn big" id="f-next">Next card</button>
+      </div>
+    </aside>
+  </section>
+</div>
+
+<!-- Between turns -->
+<div class="overlay" id="between" hidden>
+  <div class="sheet">
+    <div class="big">
+      <p id="bw-kicker"></p>
+      <h2 id="bw-title"></h2>
+      <p id="bw-sub"></p>
+      <button type="button" class="go" id="bw-go" style="margin-top:12px"></button>
+      <button type="button" class="ghost" id="bw-menu" style="align-self:flex-start">Back to menu</button>
+    </div>
+    <div class="scores" id="bw-scores"></div>
+  </div>
+</div>
+
+<div class="rotate" id="rotate">Turn your device sideways for the best view</div>
+
+<script id="cards" type="application/json">[{"id":1,"gibberish":"Bray kale egg","answer":"Break a leg","category":"Everyday Phrases","rating":"family","hint":"What you say to wish a performer good luck"},{"id":2,"gibberish":"Hap pea bird daze two ewe","answer":"Happy birthday to you","category":"Music","rating":"family","hint":"The song before blowing out candles"},{"id":3,"gibberish":"Pea nub utter in jelly","answer":"Peanut butter and jelly","category":"Food & Drink","rating":"family","hint":"A classic lunchbox sandwich"},{"id":4,"gibberish":"Mac arrow knee ant cheese","answer":"Macaroni and cheese","category":"Food & Drink","rating":"family","hint":"Cheesy pasta comfort food"},{"id":5,"gibberish":"Spa get tea hand meat bowls","answer":"Spaghetti and meatballs","category":"Food & Drink","rating":"family","hint":"Italian-style pasta with round companions"},{"id":6,"gibberish":"Chalk lit chip cook key","answer":"Chocolate chip cookie","category":"Food & Drink","rating":"family","hint":"A sweet baked treat with melty bits"},{"id":7,"gibberish":"Fission chips","answer":"Fish and chips","category":"Food & Drink","rating":"family","hint":"A British seaside takeaway"},{"id":8,"gibberish":"A pull pie","answer":"Apple pie","category":"Food & Drink","rating":"family","hint":"As American as this dessert"},{"id":9,"gibberish":"Cot tin can tea","answer":"Cotton candy","category":"Food & Drink","rating":"family","hint":"Fluffy fairground sugar on a stick"},{"id":10,"gibberish":"Bay con hen eggs","answer":"Bacon and eggs","category":"Food & Drink","rating":"family","hint":"A classic fried breakfast"},{"id":11,"gibberish":"Letter cat tout of thee bag","answer":"Let the cat out of the bag","category":"Everyday Phrases","rating":"family","hint":"Reveal a secret by accident"},{"id":12,"gibberish":"Reign in cat sand dogs","answer":"Raining cats and dogs","category":"Everyday Phrases","rating":"family","hint":"Pouring down outside"},{"id":13,"gibberish":"Hit then ale on thee head","answer":"Hit the nail on the head","category":"Everyday Phrases","rating":"family","hint":"Get something exactly right"},{"id":14,"gibberish":"Hun dirt he wet her","answer":"Under the weather","category":"Everyday Phrases","rating":"family","hint":"Feeling a bit ill"},{"id":15,"gibberish":"Cost sun arm undo leg","answer":"Costs an arm and a leg","category":"Everyday Phrases","rating":"family","hint":"Very expensive"},{"id":16,"gibberish":"Axe shun spee clout her than words","answer":"Actions speak louder than words","category":"Everyday Phrases","rating":"family","hint":"What you do matters more than what you say"},{"id":17,"gibberish":"Dome count yore chick hens","answer":"Don't count your chickens","category":"Everyday Phrases","rating":"family","hint":"Don't celebrate before it happens"},{"id":18,"gibberish":"Bye thee bull it","answer":"Bite the bullet","category":"Everyday Phrases","rating":"family","hint":"Face something unpleasant bravely"},{"id":19,"gibberish":"Spill thee bee hens","answer":"Spill the beans","category":"Everyday Phrases","rating":"family","hint":"Tell the secret"},{"id":20,"gibberish":"Hole jaw hoarse is","answer":"Hold your horses","category":"Everyday Phrases","rating":"family","hint":"Slow down, wait a moment"},{"id":21,"gibberish":"Wan sinner blew moon","answer":"Once in a blue moon","category":"Everyday Phrases","rating":"family","hint":"Very rarely"},{"id":22,"gibberish":"Thee bah Liz in yore court","answer":"The ball is in your court","category":"Everyday Phrases","rating":"family","hint":"It's your move now"},{"id":23,"gibberish":"Back tusk where won","answer":"Back to square one","category":"Everyday Phrases","rating":"family","hint":"Starting all over again"},{"id":24,"gibberish":"Ab less sing in this guys","answer":"A blessing in disguise","category":"Everyday Phrases","rating":"family","hint":"Something bad that turns out good"},{"id":25,"gibberish":"Too pea sin up odd","answer":"Two peas in a pod","category":"Everyday Phrases","rating":"family","hint":"Two people who are very alike"},{"id":26,"gibberish":"Cure he Oz city kill thick at","answer":"Curiosity killed the cat","category":"Everyday Phrases","rating":"family","hint":"Being nosy can get you in trouble"},{"id":27,"gibberish":"Roam was sent bill tin a day","answer":"Rome wasn't built in a day","category":"Everyday Phrases","rating":"family","hint":"Big things take time"},{"id":28,"gibberish":"Kill tube herds width won stone","answer":"Kill two birds with one stone","category":"Everyday Phrases","rating":"family","hint":"Get two things done at once"},{"id":29,"gibberish":"Owe vert he moon","answer":"Over the moon","category":"Everyday Phrases","rating":"family","hint":"Extremely happy"},{"id":30,"gibberish":"Good knights leap tight","answer":"Good night, sleep tight","category":"Everyday Phrases","rating":"family","hint":"Said at bedtime"},{"id":31,"gibberish":"Show wand tell","answer":"Show and tell","category":"Kids & School","rating":"family","hint":"Bring something in and talk about it to the class"},{"id":32,"gibberish":"Thee lie hen king","answer":"The Lion King","category":"Movies & TV","rating":"family","hint":"Disney film with Simba"},{"id":33,"gibberish":"Butte tea hen thee beast","answer":"Beauty and the Beast","category":"Movies & TV","rating":"family","hint":"A tale as old as time"},{"id":34,"gibberish":"Fine ding knee mow","answer":"Finding Nemo","category":"Movies & TV","rating":"family","hint":"A dad searches the ocean for his son"},{"id":35,"gibberish":"Toys tore he","answer":"Toy Story","category":"Movies & TV","rating":"family","hint":"Woody and Buzz come to life"},{"id":36,"gibberish":"Hair heap otter","answer":"Harry Potter","category":"Movies & TV","rating":"family","hint":"The boy wizard"},{"id":37,"gibberish":"Mate he for spee width ewe","answer":"May the Force be with you","category":"Movies & TV","rating":"family","hint":"A Jedi farewell"},{"id":38,"gibberish":"The whiz herd dove Oz","answer":"The Wizard of Oz","category":"Movies & TV","rating":"family","hint":"Follow the yellow brick road"},{"id":39,"gibberish":"Jaw rah sick park","answer":"Jurassic Park","category":"Movies & TV","rating":"family","hint":"Dinosaurs brought back to life"},{"id":40,"gibberish":"Moan stirs ink","answer":"Monsters, Inc.","category":"Movies & TV","rating":"family","hint":"Scarers collect children's screams"},{"id":41,"gibberish":"Spied her man","answer":"Spider-Man","category":"Movies & TV","rating":"family","hint":"Your friendly neighbourhood web-slinger"},{"id":42,"gibberish":"Marry pop inns","answer":"Mary Poppins","category":"Movies & TV","rating":"family","hint":"Practically perfect nanny with an umbrella"},{"id":43,"gibberish":"A lad in","answer":"Aladdin","category":"Movies & TV","rating":"family","hint":"A street rat with a magic lamp"},{"id":44,"gibberish":"Thin cred he bulls","answer":"The Incredibles","category":"Movies & TV","rating":"family","hint":"A family of superheroes"},{"id":45,"gibberish":"This pick a bull me","answer":"Despicable Me","category":"Movies & TV","rating":"family","hint":"Gru and his Minions"},{"id":46,"gibberish":"How tut rain yore drag on","answer":"How to Train Your Dragon","category":"Movies & TV","rating":"family","hint":"Hiccup befriends Toothless"},{"id":47,"gibberish":"Twin kill twin kill lit till star","answer":"Twinkle, twinkle, little star","category":"Music","rating":"family","hint":"How I wonder what you are"},{"id":48,"gibberish":"Roe roe row Euro boat","answer":"Row, row, row your boat","category":"Music","rating":"family","hint":"Gently down the stream"},{"id":49,"gibberish":"Jinn gull bells jinn gull lull the weigh","answer":"Jingle bells, jingle all the way","category":"Music","rating":"family","hint":"Dashing through the snow"},{"id":50,"gibberish":"Rude elf the red nose drain dear","answer":"Rudolph the Red-Nosed Reindeer","category":"Music","rating":"family","hint":"The most famous reindeer of all"},{"id":51,"gibberish":"Bow he me in rap sod he","answer":"Bohemian Rhapsody","category":"Music","rating":"family","hint":"Is this the real life?"},{"id":52,"gibberish":"Dome stop bee leaving","answer":"Don't stop believin'","category":"Music","rating":"family","hint":"Hold on to that feeling"},{"id":53,"gibberish":"Weave ill rock ewe","answer":"We will rock you","category":"Music","rating":"family","hint":"Stomp, stomp, clap"},{"id":54,"gibberish":"Shay kit off","answer":"Shake it off","category":"Music","rating":"family","hint":"Players gonna play, play, play"},{"id":55,"gibberish":"Sir cull love life","answer":"Circle of life","category":"Music","rating":"family","hint":"Opening song of The Lion King"},{"id":56,"gibberish":"Watts fur din her","answer":"What's for dinner?","category":"Everyday Phrases","rating":"family","hint":"Asked when you get home hungry"},{"id":57,"gibberish":"Sea yell ate tore alley gate her","answer":"See you later, alligator","category":"Everyday Phrases","rating":"family","hint":"A rhyming goodbye"},{"id":58,"gibberish":"Inner wile crock a dial","answer":"In a while, crocodile","category":"Everyday Phrases","rating":"family","hint":"The reply to a rhyming goodbye"},{"id":59,"gibberish":"Nigh stew meat ewe","answer":"Nice to meet you","category":"Everyday Phrases","rating":"family","hint":"Said on first introduction"},{"id":60,"gibberish":"Hap peon ewe year","answer":"Happy New Year","category":"Everyday Phrases","rating":"family","hint":"Shouted at midnight on 31 December"},{"id":61,"gibberish":"Tree core treat","answer":"Trick or treat","category":"Everyday Phrases","rating":"family","hint":"Said at doors on Halloween"},{"id":62,"gibberish":"Our weather yet","answer":"Are we there yet?","category":"Everyday Phrases","rating":"family","hint":"Asked from the back seat on a road trip"},{"id":63,"gibberish":"Pick a chew","answer":"Pikachu","category":"Pop Culture","rating":"family","hint":"Yellow electric Pokémon"},{"id":64,"gibberish":"Eye fell tau her","answer":"Eiffel Tower","category":"Pop Culture","rating":"family","hint":"Iron landmark in Paris"},{"id":65,"gibberish":"Roll a coast her","answer":"Roller coaster","category":"Pop Culture","rating":"family","hint":"A thrill ride with loops and drops"},{"id":66,"gibberish":"High dense eek","answer":"Hide and seek","category":"Kids & School","rating":"family","hint":"Count to ten, then come find me"},{"id":67,"gibberish":"Rock pay purse is hers","answer":"Rock, paper, scissors","category":"Kids & School","rating":"family","hint":"A hand game to settle disputes"},{"id":68,"gibberish":"Pin ok he oh","answer":"Pinocchio","category":"Movies & TV","rating":"family","hint":"His nose grows when he lies"},{"id":69,"gibberish":"Sin derail a","answer":"Cinderella","category":"Movies & TV","rating":"family","hint":"She lost a glass slipper"},{"id":70,"gibberish":"Hump tea dump tea","answer":"Humpty Dumpty","category":"Kids & School","rating":"family","hint":"He sat on a wall and had a great fall"},{"id":71,"gibberish":"The we'll zone the bus","answer":"The wheels on the bus","category":"Music","rating":"family","hint":"They go round and round"},{"id":72,"gibberish":"This imp sons","answer":"The Simpsons","category":"Movies & TV","rating":"family","hint":"Yellow cartoon family from Springfield"},{"id":73,"gibberish":"Win neath a pooh","answer":"Winnie the Pooh","category":"Movies & TV","rating":"family","hint":"A bear who loves honey"},{"id":74,"gibberish":"Pop a troll","answer":"Paw Patrol","category":"Movies & TV","rating":"family","hint":"Rescue pups led by Ryder"},{"id":75,"gibberish":"Lettuce leaping dogs lie","answer":"Let sleeping dogs lie","category":"Everyday Phrases","rating":"family","hint":"Don't stir up old trouble"},{"id":76,"gibberish":"Bar king up thaw rung tree","answer":"Barking up the wrong tree","category":"Everyday Phrases","rating":"family","hint":"Looking in the wrong place"},{"id":77,"gibberish":"Its knot rock kit sigh hence","answer":"It's not rocket science","category":"Everyday Phrases","rating":"family","hint":"It's not that hard"},{"id":78,"gibberish":"Bun nan a split","answer":"Banana split","category":"Food & Drink","rating":"family","hint":"Ice cream sundae with a long yellow fruit"},{"id":79,"gibberish":"Chick kin nug gets","answer":"Chicken nuggets","category":"Food & Drink","rating":"family","hint":"Bite-sized fried kids' favourite"},{"id":80,"gibberish":"Talk oh twos day","answer":"Taco Tuesday","category":"Food & Drink","rating":"family","hint":"A weekly Mexican food night"},{"id":81,"gibberish":"Burr gurn fries","answer":"Burger and fries","category":"Food & Drink","rating":"family","hint":"A classic fast-food combo"},{"id":82,"gibberish":"Sue she roll","answer":"Sushi roll","category":"Food & Drink","rating":"family","hint":"Rice and fish wrapped in seaweed"},{"id":83,"gibberish":"Jinn jar bread man","answer":"Gingerbread man","category":"Food & Drink","rating":"family","hint":"Run, run, as fast as you can"},{"id":84,"gibberish":"Eye earn man","answer":"Iron Man","category":"Movies & TV","rating":"family","hint":"Tony Stark's armoured alter ego"},{"id":85,"gibberish":"Cap tin a mare a car","answer":"Captain America","category":"Movies & TV","rating":"family","hint":"Super soldier with a star-spangled shield"},{"id":86,"gibberish":"Tell he tub bees","answer":"Teletubbies","category":"Movies & TV","rating":"family","hint":"Tinky Winky, Dipsy, Laa-Laa and Po"},{"id":87,"gibberish":"Soup herb owl","answer":"Super Bowl","category":"Pop Culture","rating":"family","hint":"The big American football final"},{"id":88,"gibberish":"Oh limp pick games","answer":"Olympic Games","category":"Pop Culture","rating":"family","hint":"Gold, silver and bronze every four years"},{"id":89,"gibberish":"Sell fees tick","answer":"Selfie stick","category":"Pop Culture","rating":"family","hint":"A pole for taking photos of yourself"},{"id":90,"gibberish":"Smell slick teen spirit","answer":"Smells Like Teen Spirit","category":"Music","rating":"family","hint":"Nirvana's grunge anthem"},{"id":91,"gibberish":"Dan sink wean","answer":"Dancing Queen","category":"Music","rating":"family","hint":"ABBA hit: young and sweet, only seventeen"},{"id":92,"gibberish":"Babe ease hark","answer":"Baby Shark","category":"Music","rating":"family","hint":"Doo doo doo doo doo doo"},{"id":93,"gibberish":"Led ego","answer":"Let It Go","category":"Music","rating":"family","hint":"Elsa's power ballad from Frozen"},{"id":94,"gibberish":"Bade heir day","answer":"Bad hair day","category":"Everyday Phrases","rating":"family","hint":"When your hair just won't cooperate"},{"id":95,"gibberish":"Re tale there a pea","answer":"Retail therapy","category":"Everyday Phrases","rating":"family","hint":"Shopping to cheer yourself up"},{"id":96,"gibberish":"Mine jaw own biz knees","answer":"Mind your own business","category":"Everyday Phrases","rating":"family","hint":"Stay out of it!"},{"id":97,"gibberish":"Lie her lie her pant son fire","answer":"Liar, liar, pants on fire","category":"Kids & School","rating":"family","hint":"Playground taunt for a fibber"},{"id":98,"gibberish":"Draw mock ween","answer":"Drama queen","category":"Everyday Phrases","rating":"family","hint":"Someone who overreacts to everything"},{"id":99,"gibberish":"Nigh towel","answer":"Night owl","category":"Everyday Phrases","rating":"family","hint":"Someone who stays up very late"},{"id":100,"gibberish":"Ell if ant in the room","answer":"Elephant in the room","category":"Everyday Phrases","rating":"family","hint":"The obvious problem nobody mentions"},{"id":101,"gibberish":"Net flick sand chill","answer":"Netflix and chill","category":"Dating & Nightlife","rating":"18+","hint":"An invitation that isn't really about TV"},{"id":102,"gibberish":"Won knights tanned","answer":"One-night stand","category":"Dating & Nightlife","rating":"18+","hint":"A fling that doesn't last till breakfast"},{"id":103,"gibberish":"Boot tea call","answer":"Booty call","category":"Dating & Nightlife","rating":"18+","hint":"A late-night text with one purpose"},{"id":104,"gibberish":"Fronds width bend a fits","answer":"Friends with benefits","category":"Dating & Nightlife","rating":"18+","hint":"More than friends, less than a relationship"},{"id":105,"gibberish":"Blinded eight","answer":"Blind date","category":"Dating & Nightlife","rating":"18+","hint":"Meeting someone you've never seen before"},{"id":106,"gibberish":"Bee rogue gulls","answer":"Beer goggles","category":"Dating & Nightlife","rating":"18+","hint":"Why everyone looks attractive at 2 a.m."},{"id":107,"gibberish":"Hang ova cure","answer":"Hangover cure","category":"Food & Drink","rating":"18+","hint":"What you desperately need the morning after"},{"id":108,"gibberish":"Hap pee our","answer":"Happy hour","category":"Dating & Nightlife","rating":"18+","hint":"Cheap drinks after work"},{"id":109,"gibberish":"Bot tom sup","answer":"Bottoms up","category":"Food & Drink","rating":"18+","hint":"A toast before you down your drink"},{"id":110,"gibberish":"Tuck heel a sun rise","answer":"Tequila sunrise","category":"Food & Drink","rating":"18+","hint":"Orange and red layered cocktail"},{"id":111,"gibberish":"Peen a coal odder","answer":"Piña colada","category":"Food & Drink","rating":"18+","hint":"If you like getting caught in the rain"},{"id":112,"gibberish":"Mar gar eat a","answer":"Margarita","category":"Food & Drink","rating":"18+","hint":"Salt on the rim, please"},{"id":113,"gibberish":"Lawn guy land eyes tea","answer":"Long Island iced tea","category":"Food & Drink","rating":"18+","hint":"A deceptively strong cocktail with no tea"},{"id":114,"gibberish":"Sec sun thee beach","answer":"Sex on the beach","category":"Food & Drink","rating":"18+","hint":"A fruity cocktail with a cheeky name"},{"id":115,"gibberish":"Shook her dad he","answer":"Sugar daddy","category":"Dating & Nightlife","rating":"18+","hint":"A wealthy older partner who pays the bills"},{"id":116,"gibberish":"Pill owe talk","answer":"Pillow talk","category":"Dating & Nightlife","rating":"18+","hint":"Late-night chat in bed"},{"id":117,"gibberish":"Dirt he dance sing","answer":"Dirty Dancing","category":"Movies & TV","rating":"18+","hint":"Nobody puts Baby in a corner"},{"id":118,"gibberish":"Fifth tea shade dove gray","answer":"Fifty Shades of Grey","category":"Movies & TV","rating":"18+","hint":"A steamy bestseller about Christian and Ana"},{"id":119,"gibberish":"Sec sand thus it tea","answer":"Sex and the City","category":"Movies & TV","rating":"18+","hint":"Carrie and friends in Manhattan"},{"id":120,"gibberish":"Gay move thrones","answer":"Game of Thrones","category":"Movies & TV","rating":"18+","hint":"Winter is coming"},{"id":121,"gibberish":"Brake ink bad","answer":"Breaking Bad","category":"Movies & TV","rating":"18+","hint":"A chemistry teacher turns to crime"},{"id":122,"gibberish":"The wool full walls treat","answer":"The Wolf of Wall Street","category":"Movies & TV","rating":"18+","hint":"Leo as a wild stockbroker"},{"id":123,"gibberish":"Pulp fix shun","answer":"Pulp Fiction","category":"Movies & TV","rating":"18+","hint":"Tarantino classic with a dance contest"},{"id":124,"gibberish":"A merry can pie","answer":"American Pie","category":"Movies & TV","rating":"18+","hint":"Teen comedy famous for a baked dessert scene"},{"id":125,"gibberish":"Hot messes press","answer":"Hot mess express","category":"Adult Humour","rating":"18+","hint":"A total disaster on the move"},{"id":126,"gibberish":"Watt hap hens in vague us stays in vague us","answer":"What happens in Vegas stays in Vegas","category":"Dating & Nightlife","rating":"18+","hint":"The rule of a wild weekend away"},{"id":127,"gibberish":"Eye kneader drink","answer":"I need a drink","category":"Adult Humour","rating":"18+","hint":"Said after a very long day"},{"id":128,"gibberish":"Why know clock","answer":"Wine o'clock","category":"Food & Drink","rating":"18+","hint":"Time to open the bottle"},{"id":129,"gibberish":"Mourn in gaff tour pill","answer":"Morning-after pill","category":"Adult Humour","rating":"18+","hint":"A just-in-case trip to the pharmacy"},{"id":130,"gibberish":"Skin knee dip ping","answer":"Skinny dipping","category":"Dating & Nightlife","rating":"18+","hint":"Swimming without a swimsuit"},{"id":131,"gibberish":"Stripe oak her","answer":"Strip poker","category":"Dating & Nightlife","rating":"18+","hint":"A card game where you lose more than money"},{"id":132,"gibberish":"True thaw dare","answer":"Truth or dare","category":"Dating & Nightlife","rating":"18+","hint":"Party game: confess or do the challenge"},{"id":133,"gibberish":"Drunk kin love","answer":"Drunk in Love","category":"Music","rating":"18+","hint":"Beyoncé and Jay-Z duet"},{"id":134,"gibberish":"Pubic rawl","answer":"Pub crawl","category":"Dating & Nightlife","rating":"18+","hint":"A night of hopping from bar to bar"},{"id":135,"gibberish":"Batch lure par tea","answer":"Bachelor party","category":"Dating & Nightlife","rating":"18+","hint":"A groom's last night of freedom"},{"id":136,"gibberish":"Mid life cry sis","answer":"Midlife crisis","category":"Adult Humour","rating":"18+","hint":"Buying a sports car at 45"},{"id":137,"gibberish":"Hair rove the dog","answer":"Hair of the dog","category":"Food & Drink","rating":"18+","hint":"Another drink to cure a hangover"},{"id":138,"gibberish":"Love hand dulls","answer":"Love handles","category":"Adult Humour","rating":"18+","hint":"Something extra to hold on to around the waist"},{"id":139,"gibberish":"Muff in top","answer":"Muffin top","category":"Adult Humour","rating":"18+","hint":"Belly spilling over tight jeans"},{"id":140,"gibberish":"Mourning would","answer":"Morning wood","category":"Adult Humour","rating":"18+","hint":"An awkward wake-up for some men"},{"id":141,"gibberish":"My ill high club","answer":"Mile-high club","category":"Dating & Nightlife","rating":"18+","hint":"An exclusive membership earned at 30,000 feet"},{"id":142,"gibberish":"Frenzy own","answer":"Friend zone","category":"Dating & Nightlife","rating":"18+","hint":"Where your crush puts you"},{"id":143,"gibberish":"Tinned her date","answer":"Tinder date","category":"Dating & Nightlife","rating":"18+","hint":"Meeting someone you swiped right on"},{"id":144,"gibberish":"Pick cup line","answer":"Pick-up line","category":"Dating & Nightlife","rating":"18+","hint":"A cheesy opener at the bar"},{"id":145,"gibberish":"Dew yuck um hear off ten","answer":"Do you come here often?","category":"Dating & Nightlife","rating":"18+","hint":"The oldest line in the book"},{"id":146,"gibberish":"Yore play sore mine","answer":"Your place or mine?","category":"Dating & Nightlife","rating":"18+","hint":"Asked at the end of a good night"},{"id":147,"gibberish":"May cow tess shun","answer":"Make-out session","category":"Dating & Nightlife","rating":"18+","hint":"A long kiss on the couch"},{"id":148,"gibberish":"Bod ease hots","answer":"Body shots","category":"Dating & Nightlife","rating":"18+","hint":"Drinking tequila off someone"},{"id":149,"gibberish":"Sham pain prob limbs","answer":"Champagne problems","category":"Adult Humour","rating":"18+","hint":"Complaints only rich people have"},{"id":150,"gibberish":"Drink king game","answer":"Drinking game","category":"Dating & Nightlife","rating":"18+","hint":"Every time someone says it, take a sip"},{"id":151,"gibberish":"Boo screws","answer":"Booze cruise","category":"Dating & Nightlife","rating":"18+","hint":"A party on a boat"},{"id":152,"gibberish":"Yay girl bomb","answer":"Jägerbomb","category":"Food & Drink","rating":"18+","hint":"A shot dropped into an energy drink"},{"id":153,"gibberish":"Dry jam you airy","answer":"Dry January","category":"Food & Drink","rating":"18+","hint":"A month off the booze"},{"id":154,"gibberish":"Bot hum less brunch","answer":"Bottomless brunch","category":"Food & Drink","rating":"18+","hint":"Eggs and endless mimosas"},{"id":155,"gibberish":"Sec see hen I know wit","answer":"Sexy and I Know It","category":"Music","rating":"18+","hint":"LMFAO's wiggle-wiggle anthem"},{"id":156,"gibberish":"Lie cuff urge in","answer":"Like a Virgin","category":"Music","rating":"18+","hint":"Madonna's touched-for-the-very-first-time hit"},{"id":157,"gibberish":"Let skit it on","answer":"Let's Get It On","category":"Music","rating":"18+","hint":"Marvin Gaye's baby-making song"},{"id":158,"gibberish":"Poor sum shook her on me","answer":"Pour Some Sugar on Me","category":"Music","rating":"18+","hint":"Def Leppard's glam-rock anthem"},{"id":159,"gibberish":"Sec sawn fire","answer":"Sex on Fire","category":"Music","rating":"18+","hint":"Kings of Leon's burning hit"},{"id":160,"gibberish":"Hip stone lie","answer":"Hips Don't Lie","category":"Music","rating":"18+","hint":"Shakira's dancefloor hit"},{"id":161,"gibberish":"Hit me babe he won mortar I'm","answer":"Hit Me Baby One More Time","category":"Music","rating":"18+","hint":"Britney's school-uniform debut"},{"id":162,"gibberish":"Bay big hot back","answer":"Baby Got Back","category":"Music","rating":"18+","hint":"Sir Mix-a-Lot likes big ones"},{"id":163,"gibberish":"Sec shoe all heeling","answer":"Sexual Healing","category":"Music","rating":"18+","hint":"Marvin Gaye's smooth slow jam"},{"id":164,"gibberish":"Rec king bawl","answer":"Wrecking Ball","category":"Music","rating":"18+","hint":"Miley swings in on one of these"},{"id":165,"gibberish":"The batch lure","answer":"The Bachelor","category":"Movies & TV","rating":"18+","hint":"Reality show where roses are handed out"},{"id":166,"gibberish":"Jinn ant on ick","answer":"Gin and tonic","category":"Food & Drink","rating":"18+","hint":"A G&T"},{"id":167,"gibberish":"Rumen coke","answer":"Rum and coke","category":"Food & Drink","rating":"18+","hint":"A Cuba libre without the lime"},{"id":168,"gibberish":"Blood dim airy","answer":"Bloody Mary","category":"Food & Drink","rating":"18+","hint":"A tomato cocktail for brunch"},{"id":169,"gibberish":"Moss cow mule","answer":"Moscow mule","category":"Food & Drink","rating":"18+","hint":"Vodka and ginger beer in a copper mug"},{"id":170,"gibberish":"Ess press owe mart tea knee","answer":"Espresso martini","category":"Food & Drink","rating":"18+","hint":"A caffeinated cocktail"},{"id":171,"gibberish":"Me mows a","answer":"Mimosa","category":"Food & Drink","rating":"18+","hint":"Champagne and orange juice"},{"id":172,"gibberish":"Play in hard tug get","answer":"Playing hard to get","category":"Dating & Nightlife","rating":"18+","hint":"Pretending not to be interested"},{"id":173,"gibberish":"Plan tea a fish inn thus he","answer":"Plenty of fish in the sea","category":"Dating & Nightlife","rating":"18+","hint":"Said to cheer up the recently dumped"},{"id":174,"gibberish":"Lawn dis tense rely shun ship","answer":"Long-distance relationship","category":"Dating & Nightlife","rating":"18+","hint":"Dating someone miles away"},{"id":175,"gibberish":"Meat the pear ants","answer":"Meet the Parents","category":"Movies & TV","rating":"18+","hint":"Ben Stiller faces a terrifying father-in-law"},{"id":176,"gibberish":"Calm it meant is shoes","answer":"Commitment issues","category":"Dating & Nightlife","rating":"18+","hint":"Why they won't call you their partner"},{"id":177,"gibberish":"Eggs boy friend","answer":"Ex-boyfriend","category":"Dating & Nightlife","rating":"18+","hint":"He's in the past for a reason"},{"id":178,"gibberish":"Watts yore numb her","answer":"What's your number?","category":"Dating & Nightlife","rating":"18+","hint":"Asked by someone hoping to text you"},{"id":179,"gibberish":"Our ewe sing gull","answer":"Are you single?","category":"Dating & Nightlife","rating":"18+","hint":"Checking before you make a move"},{"id":180,"gibberish":"Sleep ping width then a me","answer":"Sleeping with the Enemy","category":"Movies & TV","rating":"18+","hint":"Thriller about escaping a controlling husband"},{"id":181,"gibberish":"Wed ink crash hers","answer":"Wedding Crashers","category":"Movies & TV","rating":"18+","hint":"Two guys who sneak into receptions"},{"id":182,"gibberish":"High weight tow hell","answer":"Highway to Hell","category":"Music","rating":"18+","hint":"AC/DC rock anthem"},{"id":183,"gibberish":"Part tea any mull","answer":"Party animal","category":"Dating & Nightlife","rating":"18+","hint":"Always the last to leave"},{"id":184,"gibberish":"Hang key pang key","answer":"Hanky-panky","category":"Adult Humour","rating":"18+","hint":"Mischievous fooling around"},{"id":185,"gibberish":"Thee bird sand thee bees","answer":"The birds and the bees","category":"Adult Humour","rating":"18+","hint":"An awkward talk with your parents"},{"id":186,"gibberish":"Whose yore dad he","answer":"Who's your daddy?","category":"Adult Humour","rating":"18+","hint":"A cocky boast"},{"id":187,"gibberish":"Take kit off","answer":"Take it off","category":"Adult Humour","rating":"18+","hint":"Shouted at a strip show"},{"id":188,"gibberish":"Sighs does sent matter","answer":"Size doesn't matter","category":"Adult Humour","rating":"18+","hint":"Or so they say"},{"id":189,"gibberish":"Lick wit cur edge","answer":"Liquid courage","category":"Food & Drink","rating":"18+","hint":"A drink before you talk to your crush"},{"id":190,"gibberish":"Bird dace suit","answer":"Birthday suit","category":"Adult Humour","rating":"18+","hint":"Wearing nothing at all"},{"id":191,"gibberish":"Hot hand both erred","answer":"Hot and bothered","category":"Adult Humour","rating":"18+","hint":"Flustered and turned on"},{"id":192,"gibberish":"Tall darken hand some","answer":"Tall, dark and handsome","category":"Dating & Nightlife","rating":"18+","hint":"Everyone's dream date description"},{"id":193,"gibberish":"Get her room","answer":"Get a room!","category":"Dating & Nightlife","rating":"18+","hint":"Shouted at a couple kissing in public"},{"id":194,"gibberish":"Hole dime beer","answer":"Hold my beer","category":"Adult Humour","rating":"18+","hint":"Said right before a terrible idea"},{"id":195,"gibberish":"Shay can knots tired","answer":"Shaken, not stirred","category":"Food & Drink","rating":"18+","hint":"How a certain spy likes his martini"},{"id":196,"gibberish":"Wan fourth a road","answer":"One for the road","category":"Food & Drink","rating":"18+","hint":"A final drink before heading home"},{"id":197,"gibberish":"Freed rinks","answer":"Free drinks","category":"Dating & Nightlife","rating":"18+","hint":"Two words that make a party"},{"id":198,"gibberish":"Kiss sand tell","answer":"Kiss and tell","category":"Dating & Nightlife","rating":"18+","hint":"Sharing the juicy details after a date"},{"id":199,"gibberish":"Lap dents","answer":"Lap dance","category":"Dating & Nightlife","rating":"18+","hint":"A private performance at a club"},{"id":200,"gibberish":"Why nan dine","answer":"Wine and dine","category":"Dating & Nightlife","rating":"18+","hint":"Treat someone to a fancy date"}]</script>
+<script>
+(function(){
+const CARDS = JSON.parse(document.getElementById('cards').textContent);
+const $ = id => document.getElementById(id);
+const store = {
+  get(k,d){ try{ const v = localStorage.getItem('mouthful.'+k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem('mouthful.'+k, JSON.stringify(v)); }catch(e){} }
+};
+const S = {
+  mode: store.get('mode','family'),
+  style: store.get('style','teams'),
+  teams: store.get('teams',['Team Red','Team Blue']),
+  secs: store.get('secs',60),
+  rounds: store.get('rounds',3),
+};
+let G = null; // live game
+
+// ---------- deck ----------
+function poolFor(mode){
+  return CARDS.filter(c => mode==='mixed' ? true : mode==='adult' ? c.rating==='18+' : c.rating==='family');
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function makeDeck(mode){
+  const seen = new Set(store.get('seen.'+mode, []));
+  let pool = poolFor(mode);
+  let fresh = pool.filter(c=>!seen.has(c.id));
+  if(fresh.length < 8){ store.set('seen.'+mode, []); fresh = pool.slice(); }
+  return shuffle(fresh);
+}
+function markSeen(mode,id){ const s = store.get('seen.'+mode, []); if(!s.includes(id)){ s.push(id); store.set('seen.'+mode, s);} }
+
+// ---------- setup UI ----------
+function setPressed(groupId, val){ $(groupId).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===String(val)))); }
+function theme(mode){ document.documentElement.classList.toggle('adult', mode==='adult'); document.documentElement.classList.toggle('mixed', mode==='mixed'); }
+function renderTeams(){
+  const box = $('teams'); box.innerHTML='';
+  S.teams.forEach((name,i)=>{
+    const inp = document.createElement('input');
+    inp.id='team-'+i; inp.value=name; inp.maxLength=18; inp.setAttribute('aria-label','Team '+(i+1)+' name');
+    inp.addEventListener('input',()=>{ S.teams[i]=inp.value; store.set('teams',S.teams); });
+    box.appendChild(inp);
+  });
+  $('rmteam').disabled = S.teams.length<=2; $('addteam').disabled = S.teams.length>=4;
+}
+function renderSetup(){
+  setPressed('mode',S.mode); setPressed('style',S.style); setPressed('secs',S.secs); setPressed('rounds',S.rounds);
+  theme(S.mode);
+  $('c-family').textContent = poolFor('family').length+' cards';
+  $('c-adult').textContent = poolFor('adult').length+' cards';
+  $('c-mixed').textContent = CARDS.length+' cards';
+  const isTeams = S.style==='teams';
+  $('teamrow').hidden = !isTeams; $('timerow').hidden = !isTeams;
+  const left = makeDeck(S.mode).length;
+  $('deckinfo').textContent = left+' unplayed cards in this deck on this device.';
+  renderTeams();
+}
+function bindSeg(id,key,cast){
+  $(id).addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; S[key]=cast?cast(b.dataset.v):b.dataset.v; store.set(key,S[key]); renderSetup(); });
+}
+bindSeg('mode','mode'); bindSeg('style','style'); bindSeg('secs','secs',Number); bindSeg('rounds','rounds',Number);
+$('addteam').onclick=()=>{ const names=['Team Red','Team Blue','Team Gold','Team Green']; S.teams.push(names[S.teams.length]||('Team '+(S.teams.length+1))); store.set('teams',S.teams); renderTeams(); };
+$('rmteam').onclick=()=>{ if(S.teams.length>2){ S.teams.pop(); store.set('teams',S.teams); renderTeams(); } };
+$('start').onclick=startGame;
+
+// ---------- game ----------
+let wake=null;
+async function keepAwake(){ try{ if('wakeLock' in navigator) wake = await navigator.wakeLock.request('screen'); }catch(e){} }
+function release(){ try{ wake && wake.release(); }catch(e){} wake=null; }
+
+function startGame(){
+  const teams = S.teams.map((n,i)=> (n||'').trim() || ('Team '+(i+1)));
+  G = { mode:S.mode, style:S.style, deck:makeDeck(S.mode), teams:teams.map(n=>({name:n,score:0})),
+        turn:0, round:1, secs:S.secs, rounds:S.rounds, card:null, log:[], left:S.secs, timer:null, busy:false, hint:false, revealed:false };
+  $('setup').hidden=true; $('play').hidden=false;
+  const team = G.style==='teams';
+  $('teamblock').hidden=!team; $('clockblock').hidden=!team; $('btns-team').hidden=!team; $('btns-free').hidden=team; $('pause').hidden=!team;
+  keepAwake();
+  if(team) showBetween('ready'); else { $('tally').textContent=''; nextCard(); }
+}
+function drawCard(){
+  if(!G.deck.length) G.deck = shuffle(poolFor(G.mode).slice());
+  return G.deck.pop();
+}
+function nextCard(){
+  const c = drawCard(); G.card=c; G.hint=false; G.revealed=false; markSeen(G.mode,c.id);
+  $('cat').textContent=c.category;
+  const r=$('rate'); r.textContent = c.rating==='18+'?'18+':'Family'; r.classList.toggle('adult', c.rating==='18+');
+  const g=$('gib'); g.textContent=c.gibberish; g.classList.toggle('long', c.gibberish.length>30);
+  $('hint').textContent=''; $('answer').className='answer';
+  const card=$('card'); card.classList.remove('deal'); void card.offsetWidth; card.classList.add('deal');
+  if(G.style==='free'){ $('f-reveal').disabled=false; $('f-hint').disabled=false; $('tally').textContent=''; }
+  else { $('b-hint').disabled=false; }
+}
+function showAnswer(kind){
+  $('anslabel').textContent = kind==='got'?'Got it':kind==='pass'?'Passed':kind==='time'?'Time! The answer was':'The answer';
+  $('anstext').textContent = G.card.answer;
+  $('answer').className = 'answer show '+(kind==='got'?'got':'pass');
+}
+function showHint(){ if(!G||!G.card) return; G.hint=true; $('hint').textContent='Hint: '+G.card.hint; }
+
+function teamTally(){ const t=G.teams[G.turn]; const got=G.log.filter(l=>l.got).length; $('tally').textContent = got+' this turn · '+t.score+' total'; }
+function startTurn(){
+  G.log=[]; G.left=G.secs; G.busy=false;
+  $('roundlbl').textContent='Round '+G.round+' of '+G.rounds; $('tname').textContent=G.teams[G.turn].name;
+  ['b-got','b-pass','b-hint'].forEach(id=>$(id).disabled=false);
+  nextCard(); teamTally(); tick(true);
+  clearInterval(G.timer); G.timer=setInterval(()=>tick(),1000);
+}
+function tick(first){
+  if(!first) G.left--;
+  $('secsleft').textContent=Math.max(0,G.left); $('secsleft').classList.toggle('low',G.left<=10);
+  $('barfill').style.transform='scaleX('+(Math.max(0,G.left)/G.secs)+')';
+  if(G.left<=0){ clearInterval(G.timer); endTurn(); }
+}
+function act(got){
+  if(!G||G.busy) return; G.busy=true;
+  G.log.push({c:G.card,got}); if(got) G.teams[G.turn].score++;
+  teamTally(); showAnswer(got?'got':'pass');
+  setTimeout(()=>{ if(!G||G.left<=0) return; G.busy=false; nextCard(); }, got?900:1300);
+}
+function endTurn(){
+  G.busy=true; ['b-got','b-pass','b-hint'].forEach(id=>$(id).disabled=true);
+  if(G.card && !G.log.some(l=>l.c===G.card)) { G.log.push({c:G.card,got:false}); showAnswer('time'); }
+  setTimeout(()=>showBetween('summary'),1400);
+}
+function scoresHTML(highlight){
+  const max = Math.max(...G.teams.map(t=>t.score));
+  return G.teams.map((t,i)=>`<div class="sc ${i===highlight?'next':''}"><span>${esc(t.name)}</span><span class="n">${t.score}</span></div>`).join('');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+function showBetween(kind){
+  const ov=$('between'); ov.hidden=false;
+  if(kind==='ready'){
+    $('bw-kicker').textContent='Round '+G.round+' of '+G.rounds;
+    $('bw-title').textContent=G.teams[G.turn].name+', you\'re up';
+    $('bw-sub').textContent='Hand the device to '+G.teams[G.turn].name+'. Read each card out loud as a team and shout the phrase when you hear it.';
+    $('bw-go').textContent='Start '+G.secs+'s turn';
+    $('bw-scores').innerHTML='<div class="label">Scores</div>'+scoresHTML(G.turn);
+    $('bw-go').onclick=()=>{ ov.hidden=true; startTurn(); };
+    return;
+  }
+  // summary of the turn just played, then advance
+  const t=G.teams[G.turn]; const got=G.log.filter(l=>l.got).length;
+  const logHTML = '<div class="label">This turn</div><div class="log">'+G.log.map(l=>`<div><span class="${l.got?'g':'p'}">${l.got?'✓':'–'}</span><span>${esc(l.c.answer)}</span></div>`).join('')+'</div>';
+  G.turn++; if(G.turn>=G.teams.length){ G.turn=0; G.round++; }
+  const over = G.round>G.rounds;
+  if(over){
+    const best=Math.max(...G.teams.map(x=>x.score)); const winners=G.teams.filter(x=>x.score===best);
+    $('bw-kicker').textContent='Game over';
+    $('bw-title').textContent = winners.length>1 ? 'It\'s a tie!' : winners[0].name+' wins!';
+    $('bw-sub').textContent = winners.length>1 ? winners.map(w=>w.name).join(' and ')+' share it with '+best+' each.' : best+' phrases cracked.';
+    $('bw-go').textContent='Play again';
+    $('bw-scores').innerHTML='<div class="label">Final scores</div>'+scoresHTML(-1)+logHTML;
+    $('bw-go').onclick=()=>{ ov.hidden=true; startGame(); };
+  } else {
+    $('bw-kicker').textContent=t.name+' scored';
+    $('bw-title').textContent=got+(got===1?' phrase':' phrases');
+    $('bw-sub').textContent='Next up: '+G.teams[G.turn].name+' (round '+G.round+' of '+G.rounds+').';
+    $('bw-go').textContent=G.teams[G.turn].name+', start';
+    $('bw-scores').innerHTML='<div class="label">Scores</div>'+scoresHTML(G.turn)+logHTML;
+    $('bw-go').onclick=()=>{ ov.hidden=true; startTurn(); };
+  }
+}
+function toMenu(){ if(G){ clearInterval(G.timer);} G=null; release(); $('between').hidden=true; $('play').hidden=true; $('setup').hidden=false; renderSetup(); }
+
+let paused=false;
+$('pause').onclick=()=>{
+  if(!G) return;
+  if(!paused){ paused=true; clearInterval(G.timer); $('pause').textContent='Resume'; ['b-got','b-pass','b-hint'].forEach(id=>$(id).disabled=true); $('gib').style.filter='blur(14px)'; }
+  else { paused=false; $('pause').textContent='Pause'; ['b-got','b-pass','b-hint'].forEach(id=>$(id).disabled=false); $('gib').style.filter=''; G.timer=setInterval(()=>tick(),1000); }
+};
+$('b-got').onclick=()=>act(true);
+$('b-pass').onclick=()=>act(false);
+$('b-hint').onclick=()=>{ showHint(); $('b-hint').disabled=true; };
+$('f-hint').onclick=()=>{ showHint(); $('f-hint').disabled=true; };
+$('f-reveal').onclick=()=>{ showAnswer('reveal'); $('f-reveal').disabled=true; };
+$('f-next').onclick=nextCard;
+$('quit').onclick=toMenu; $('bw-menu').onclick=toMenu;
+document.addEventListener('keydown',e=>{
+  if(!G || $('play').hidden || !$('between').hidden || e.target.tagName==='INPUT') return;
+  const k=e.key.toLowerCase();
+  if(G.style==='teams'){ if(paused) return; if(k===' '||k==='enter'){e.preventDefault();act(true);} else if(k==='p'){act(false);} else if(k==='h'){showHint();} }
+  else { if(k===' '||k==='enter'){e.preventDefault();nextCard();} else if(k==='r'){showAnswer('reveal');} else if(k==='h'){showHint();} }
+});
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && G) keepAwake(); });
+renderSetup();
+})();
+</script>
+
+</body>
+</html>
