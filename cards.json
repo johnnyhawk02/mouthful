@@ -1598,5 +1598,245 @@
     "category": "Dating & Nightlife",
     "rating": "18+",
     "hint": "Treat someone to a fancy date"
+  },
+  {
+    "id": 201,
+    "gibberish": "Canoe Key Pass Egret",
+    "answer": "Can you keep a secret?",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Asked before sharing something private"
+  },
+  {
+    "id": 202,
+    "gibberish": "Jog Clay Die Scream",
+    "answer": "Chocolate ice cream",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "A brown frozen dessert"
+  },
+  {
+    "id": 203,
+    "gibberish": "Ladle Rat Rotten Hut",
+    "answer": "Little Red Riding Hood",
+    "category": "Movies & TV",
+    "rating": "family",
+    "hint": "She meets a wolf on the way to Grandma's"
+  },
+  {
+    "id": 204,
+    "gibberish": "My Cull Chore Den",
+    "answer": "Michael Jordan",
+    "category": "Pop Culture",
+    "rating": "family",
+    "hint": "Basketball legend, number 23"
+  },
+  {
+    "id": 205,
+    "gibberish": "Bee Foreign Halved Her",
+    "answer": "Before and after",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Two photos that show a big change"
+  },
+  {
+    "id": 206,
+    "gibberish": "These Ant Are Claws",
+    "answer": "The Santa Clause",
+    "category": "Movies & TV",
+    "rating": "family",
+    "hint": "Tim Allen becomes Father Christmas"
+  },
+  {
+    "id": 207,
+    "gibberish": "Sock Herb Hauls",
+    "answer": "Soccer balls",
+    "category": "Pop Culture",
+    "rating": "family",
+    "hint": "You kick them into a goal"
+  },
+  {
+    "id": 208,
+    "gibberish": "Rap Hun Sell",
+    "answer": "Rapunzel",
+    "category": "Movies & TV",
+    "rating": "family",
+    "hint": "Let down your long hair"
+  },
+  {
+    "id": 209,
+    "gibberish": "Hugh Knigh Teds Dates",
+    "answer": "United States",
+    "category": "Pop Culture",
+    "rating": "family",
+    "hint": "Fifty stars on its flag"
+  },
+  {
+    "id": 210,
+    "gibberish": "Freez Ham Pulse",
+    "answer": "Free samples",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "Little tastes handed out at the supermarket"
+  },
+  {
+    "id": 211,
+    "gibberish": "Huh Mere Eye Can Eye Dull",
+    "answer": "American Idol",
+    "category": "Movies & TV",
+    "rating": "family",
+    "hint": "TV singing competition"
+  },
+  {
+    "id": 212,
+    "gibberish": "Leaf Mia Lone",
+    "answer": "Leave me alone",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "What you say when you want some space"
+  },
+  {
+    "id": 213,
+    "gibberish": "Sip Eighty Dude Ha!",
+    "answer": "Zip-a-Dee-Doo-Dah",
+    "category": "Music",
+    "rating": "family",
+    "hint": "My, oh my, what a wonderful day"
+  },
+  {
+    "id": 214,
+    "gibberish": "Dock Terse Ooze",
+    "answer": "Dr. Seuss",
+    "category": "Pop Culture",
+    "rating": "family",
+    "hint": "Author of The Cat in the Hat"
+  },
+  {
+    "id": 215,
+    "gibberish": "Eyes Tink",
+    "answer": "I stink",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Time for a shower"
+  },
+  {
+    "id": 216,
+    "gibberish": "Neigh Verse Sane Heifer",
+    "answer": "Never say never",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Don't rule anything out"
+  },
+  {
+    "id": 217,
+    "gibberish": "Around Dove Apple Laws",
+    "answer": "A round of applause",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Everyone clap!"
+  },
+  {
+    "id": 218,
+    "gibberish": "My Ham Mead Hole Fins",
+    "answer": "Miami Dolphins",
+    "category": "Pop Culture",
+    "rating": "family",
+    "hint": "Florida American football team"
+  },
+  {
+    "id": 219,
+    "gibberish": "Paper Own Heap Heats Aah",
+    "answer": "Pepperoni pizza",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "A pie topped with spicy round slices"
+  },
+  {
+    "id": 220,
+    "gibberish": "Sink Owed Deem Eye Owe",
+    "answer": "Cinco de Mayo",
+    "category": "Pop Culture",
+    "rating": "family",
+    "hint": "A May 5th celebration"
+  },
+  {
+    "id": 221,
+    "gibberish": "Poe Tate Terse Hal Ad",
+    "answer": "Potato salad",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "A picnic side dish with mayo"
+  },
+  {
+    "id": 222,
+    "gibberish": "Wheel Yun Air Ream He",
+    "answer": "Will you marry me?",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Asked on one knee"
+  },
+  {
+    "id": 223,
+    "gibberish": "Pick Sin Herb Lank Hit",
+    "answer": "Pigs in a blanket",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "Little sausages wrapped in pastry"
+  },
+  {
+    "id": 224,
+    "gibberish": "Srobe Bury Sink Ream",
+    "answer": "Strawberries and cream",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "A classic Wimbledon treat"
+  },
+  {
+    "id": 225,
+    "gibberish": "Reese Urchin Deep Element",
+    "answer": "Research and development",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "The department that invents new products"
+  },
+  {
+    "id": 226,
+    "gibberish": "Sea Can't Higher Dove Fit",
+    "answer": "Sick and tired of it",
+    "category": "Everyday Phrases",
+    "rating": "family",
+    "hint": "Totally fed up"
+  },
+  {
+    "id": 227,
+    "gibberish": "Oar He Oak Hooky",
+    "answer": "Oreo cookie",
+    "category": "Food & Drink",
+    "rating": "family",
+    "hint": "Black and white sandwich biscuit"
+  },
+  {
+    "id": 228,
+    "gibberish": "Delete Elmer Made",
+    "answer": "The Little Mermaid",
+    "category": "Movies & TV",
+    "rating": "family",
+    "hint": "Ariel wants to be part of your world"
+  },
+  {
+    "id": 229,
+    "gibberish": "Says Amy's Treat",
+    "answer": "Sesame Street",
+    "category": "Movies & TV",
+    "rating": "family",
+    "hint": "Big Bird's neighbourhood"
+  },
+  {
+    "id": 230,
+    "gibberish": "Marry Addle Ladle Am",
+    "answer": "Mary had a little lamb",
+    "category": "Music",
+    "rating": "family",
+    "hint": "Its fleece was white as snow"
   }
 ]
